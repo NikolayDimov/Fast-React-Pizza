@@ -1,6 +1,18 @@
-import { Form, redirect } from "react-router-dom";
+import { Form, redirect, useActionData, useNavigation } from "react-router-dom";
 import { PizzaOrder } from "./Order";
 import { createOrder } from "../../services/apiRestaurant";
+
+export interface Order {
+    customer: string;
+    phone: string;
+    address: string;
+    priority?: boolean;
+    cart: PizzaOrder[];
+}
+
+export interface Errors {
+    phone?: string;
+}
 
 // https://uibakery.io/regex-library/phone-number
 const isValidPhone = (str: string) => /^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/.test(str);
@@ -30,8 +42,12 @@ const fakeCart: PizzaOrder[] = [
 ];
 
 function CreateOrder() {
+    const navigation = useNavigation();
+    const isSubmitting = navigation.state === "submitting";
     // const [withPriority, setWithPriority] = useState(false);
     const cart = fakeCart;
+
+    const formErrors: Errors | undefined = useActionData() as Errors | undefined;
 
     return (
         <div>
@@ -49,6 +65,7 @@ function CreateOrder() {
                     <div>
                         <input type="tel" name="phone" required />
                     </div>
+                    {formErrors?.phone && <p>{formErrors.phone}</p>}
                 </div>
 
                 <div>
@@ -71,7 +88,7 @@ function CreateOrder() {
 
                 <div>
                     <input type="hidden" name="cart" value={JSON.stringify(cart)} />
-                    <button>Order now</button>
+                    <button disabled={isSubmitting}>{isSubmitting ? "Placing order..." : "Order now"}</button>
                 </div>
             </Form>
         </div>
@@ -80,17 +97,32 @@ function CreateOrder() {
 
 export async function action({ request }: { request: Request }) {
     const formData = await request.formData();
-    const data = Object.fromEntries(formData);
+    const data: Record<string, FormDataEntryValue> = Object.fromEntries(formData);
 
-    console.log(data);
+    // Define a function to check if a value is a PizzaOrder array
+    const isPizzaOrderArray = (value: unknown): value is PizzaOrder[] => {
+        return Array.isArray(value) && value.every((item) => typeof item === "object" && item !== null);
+    };
 
-    const order = {
-        ...data,
-        cart: JSON.parse(data.cart),
+    // Cast data to Order type and handle type mismatches
+    const order: Partial<Order> = {
+        customer: data.customer?.toString() || "",
+        phone: data.phone?.toString() || "",
+        address: data.address?.toString() || "",
+        cart: isPizzaOrderArray(data.cart) ? (data.cart as PizzaOrder[]) : [],
         priority: data.priority === "on",
     };
 
-    const newOrder = await createOrder(order);
+    // Initialize errors object
+    const errors: Errors = {};
+
+    // Validate phone number
+    if (order.phone && !isValidPhone(order.phone)) errors.phone = "Please enter a correct phone number!";
+
+    // Check for errors and handle redirection
+    if (Object.keys(errors).length > 0) return errors;
+
+    const newOrder = await createOrder(order as Order);
 
     return redirect(`/order/${newOrder.id}`);
 }
