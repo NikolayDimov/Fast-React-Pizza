@@ -20,7 +20,7 @@ export async function getOrder(id: string): Promise<OrderData> {
     return data;
 }
 
-export async function createOrder(newOrder: OrderData): Promise<OrderData> {
+export async function createOrder(newOrder: Partial<OrderData>): Promise<OrderData> {
     try {
         const res = await fetch(`${API_URL}/order`, {
             method: "POST",
