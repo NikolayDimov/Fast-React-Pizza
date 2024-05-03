@@ -14,7 +14,6 @@ interface Pizza {
 
 const Menu: React.FC = () => {
     const menu = useLoaderData() as Pizza[];
-    console.log(menu);
 
     return (
         <ul>
