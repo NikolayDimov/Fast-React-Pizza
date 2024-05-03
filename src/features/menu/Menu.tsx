@@ -3,7 +3,7 @@ import { useLoaderData } from "react-router-dom";
 import { getMenu } from "../../services/apiRestaurant";
 import MenuItem from "./MenuItem";
 
-interface Pizza {
+export interface Pizza {
     id: number;
     name: string;
     unitPrice: number;

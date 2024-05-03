@@ -2,7 +2,29 @@
 
 import { calcMinutesLeft, formatCurrency, formatDate } from "../../utils/helpers";
 
-const order = {
+export interface PizzaOrder {
+    pizzaId: number;
+    name: string;
+    quantity: number;
+    unitPrice: number;
+    totalPrice: number;
+}
+
+export interface OrderData {
+    id: string;
+    status?: string;
+    customer?: string;
+    phone?: string;
+    address?: string;
+    priority: boolean;
+    estimatedDelivery: string;
+    cart: PizzaOrder[];
+    position: string;
+    orderPrice: number;
+    priorityPrice?: number;
+}
+
+const order: OrderData = {
     id: "ABCDEF",
     customer: "Jonas",
     phone: "123456789",
@@ -61,7 +83,7 @@ function Order() {
             <div>
                 <p>Price pizza: {formatCurrency(orderPrice)}</p>
                 {priority && <p>Price priority: {formatCurrency(priorityPrice)}</p>}
-                <p>To pay on delivery: {formatCurrency(orderPrice + priorityPrice)}</p>
+                {priorityPrice && <p>To pay on delivery: {formatCurrency(orderPrice + priorityPrice)}</p>}
             </div>
         </div>
     );
