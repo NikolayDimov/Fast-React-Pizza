@@ -1,5 +1,25 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { CartItemType } from "./CartItem";
+
+// Define a single type for the cart item used throughout the app
+export interface CartItemType {
+    pizzaId: number;
+    name: string;
+    quantity: number;
+    unitPrice: number;
+    totalPrice: number;
+}
+
+// Use CartItem type for component props
+export interface CartItemProps {
+    item: CartItemType;
+}
+
+// Define the structure of the entire cart within the state
+export type CartRootState = {
+    cart: {
+        cart: CartItemType[];
+    };
+};
 
 export interface CartState {
     cart: CartItemType[];
@@ -52,3 +72,9 @@ const cartSlice = createSlice({
 export const { addItem, deleteItem, increaseItemQuantity, decreaseItemQuantity, clearCart } = cartSlice.actions;
 
 export default cartSlice.reducer;
+
+export const getCart = (state: CartRootState) => state.cart.cart;
+
+export const getTotalCartQuantity = (state: CartRootState) => state.cart.cart.reduce((sum, item) => sum + item.quantity, 0);
+
+export const getTotalCartPrice = (state: CartRootState) => state.cart.cart.reduce((sum, item) => sum + item.totalPrice, 0);
