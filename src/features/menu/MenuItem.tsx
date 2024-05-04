@@ -1,14 +1,6 @@
 import Button from "../../ui/Button";
 import { formatCurrency } from "../../utils/helpers";
-
-interface Pizza {
-    id: number;
-    name: string;
-    unitPrice: number;
-    ingredients: string[];
-    soldOut: boolean;
-    imageUrl: string;
-}
+import { Pizza } from "./Menu";
 
 interface MenuItemProps {
     pizza: Pizza;
