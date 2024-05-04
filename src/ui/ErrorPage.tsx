@@ -1,4 +1,5 @@
-import { useNavigate, useRouteError } from "react-router-dom";
+import { useRouteError } from "react-router-dom";
+import LinkButton from "./LinkButton";
 
 interface RouteError {
     data: string;
@@ -6,7 +7,6 @@ interface RouteError {
 }
 
 function ErrorPage() {
-    const navigate = useNavigate();
     const error = useRouteError() as RouteError | null;
 
     console.log(error);
@@ -15,7 +15,8 @@ function ErrorPage() {
         <div>
             <h1>Something went wrong 😢</h1>
             <p>{error?.data || error?.message}</p>
-            <button onClick={() => navigate(-1)}>&larr; Go back</button>
+
+            <LinkButton to="-1">&larr; Go back</LinkButton>
         </div>
     );
 }
