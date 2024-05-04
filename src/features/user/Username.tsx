@@ -1,13 +1,13 @@
 import { useSelector } from "react-redux";
 
-type RootState = {
+export type UserRootState = {
     user: {
         username: string;
     };
 };
 
 const Username: React.FC = () => {
-    const username = useSelector((state: RootState) => state.user.username);
+    const username = useSelector((state: UserRootState) => state.user.username);
 
     if (!username) return null;
 

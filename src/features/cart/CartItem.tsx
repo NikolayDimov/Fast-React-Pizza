@@ -18,8 +18,8 @@ function CartItem({ item }: CartItemProps) {
             <p className="mb-1 sm:mb-0">
                 {quantity}&times; {name}
             </p>
-            <div className="flex justify-between items-center">
-                <p className="text-s, font-bold">{formatCurrency(totalPrice)}</p>
+            <div className="flex gap-4 justify-between items-center">
+                <p className="text-sm font-bold">{formatCurrency(totalPrice)}</p>
                 <Button type="small">Delete</Button>
             </div>
         </li>

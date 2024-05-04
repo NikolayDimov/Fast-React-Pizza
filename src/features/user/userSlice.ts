@@ -29,7 +29,7 @@ export interface State {
 // export type Action = OpenAccountProps;
 
 const initialState: State = {
-    username: "NIKI10",
+    username: "",
 };
 
 const userSlice = createSlice({
@@ -42,6 +42,6 @@ const userSlice = createSlice({
     },
 });
 
-export const { updatename } = userSlice.actions;
+export const { updateName } = userSlice.actions;
 
 export default userSlice.reducer;
