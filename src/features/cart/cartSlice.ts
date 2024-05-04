@@ -1,54 +1,49 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { CartItemType } from "./CartItem";
 
-export interface State {
-    cart: {
-        pizzaId: number;
-        name: string;
-        quantity: number;
-        unitPrice: number;
-        totalPrice: number;
-    }[];
+export interface CartState {
+    cart: CartItemType[];
 }
 
-const initialState: State = {
-    // cart: [],
+const initialState: CartState = {
+    cart: [],
 
-    cart: [
-        {
-            pizzaId: 12,
-            name: "Mediterranean",
-            quantity: 2,
-            unitPrice: 16,
-            totalPrice: 32,
-        },
-    ],
+    // cart: [
+    //     {
+    //         pizzaId: 12,
+    //         name: "Mediterranean",
+    //         quantity: 2,
+    //         unitPrice: 16,
+    //         totalPrice: 32,
+    //     },
+    // ],
 };
 
 const cartSlice = createSlice({
     name: "cart",
     initialState,
     reducers: {
-        addItem(state: State, action) {
+        addItem(state: CartState, action) {
             state.cart.push(action.payload);
         },
-        deleteItem(state: State, action) {
+        deleteItem(state: CartState, action) {
             state.cart = state.cart.filter((item) => item.pizzaId !== action.payload);
         },
-        increaseItemQuantity(state: State, action) {
+        increaseItemQuantity(state: CartState, action) {
             const item = state.cart.find((item) => item.pizzaId === action.payload);
             if (item) {
                 item.quantity++;
                 item.totalPrice = item.quantity * item.unitPrice;
             }
         },
-        decreaseItemQuantity(state: State, action) {
+        decreaseItemQuantity(state: CartState, action) {
             const item = state.cart.find((item) => item.pizzaId === action.payload);
             if (item) {
                 item.quantity--;
                 item.totalPrice = item.quantity * item.unitPrice;
             }
         },
-        clearCart(state: State) {
+        clearCart(state: CartState) {
             state.cart = [];
         },
     },
