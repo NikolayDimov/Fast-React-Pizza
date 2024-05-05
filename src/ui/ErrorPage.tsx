@@ -6,7 +6,7 @@ interface RouteError {
     message: string;
 }
 
-function ErrorPage() {
+const ErrorPage: React.FC = () => {
     const error = useRouteError() as RouteError | null;
 
     console.log(error);
@@ -19,6 +19,6 @@ function ErrorPage() {
             <LinkButton to="-1">&larr; Go back</LinkButton>
         </div>
     );
-}
+};
 
 export default ErrorPage;

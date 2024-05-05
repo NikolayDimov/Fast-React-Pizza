@@ -8,7 +8,7 @@ interface ButtonProps {
     onClick?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 }
 
-const Button = ({ children, disabled, to, type = "primary", onClick }: ButtonProps) => {
+const Button: React.FC<ButtonProps> = ({ children, disabled, to, type = "primary", onClick }) => {
     const base =
         "bg-yellow-400 uppercase font-semibold text-sm text-stone-800  inline-block tracking-wide rounded-full hover:bg-yellow-300 transition-colors duration-300 focus:outline-none focus:ring focus:ring-yellow-300 focus:ring-offset-2 disabled:cursor-not-allowed";
 

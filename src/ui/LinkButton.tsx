@@ -5,7 +5,7 @@ interface LinkButtonProps {
     to: string;
 }
 
-const LinkButton = ({ children, to }: LinkButtonProps) => {
+const LinkButton: React.FC<LinkButtonProps> = ({ children, to }) => {
     const navigate = useNavigate();
     const className = "text-sm text-blue-500 hover:text-blue-600 hover:underline";
 
