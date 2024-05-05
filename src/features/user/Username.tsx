@@ -1,13 +1,8 @@
 import { useSelector } from "react-redux";
-
-export type UserRootState = {
-    user: {
-        username: string;
-    };
-};
+import { State } from "./userSlice";
 
 const Username: React.FC = () => {
-    const username = useSelector((state: UserRootState) => state.user.username);
+    const username = useSelector((state: State) => state.username);
 
     if (!username) return null;
 
