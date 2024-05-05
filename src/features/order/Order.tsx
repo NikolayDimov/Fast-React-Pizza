@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { getOrder } from "../../services/apiRestaurant";
 import { calcMinutesLeft, formatCurrency, formatDate } from "../../utils/helpers";
 import OrderItem from "./OrderItem";
+import UpdateOrder from "./UpdateOrder";
 
 export interface PizzaOrder {
     pizzaId: number;
@@ -74,6 +75,7 @@ export interface OrderItemData {
 
 function Order() {
     const order = useLoaderData() as OrderData;
+    console.log("ORDER", order);
     const fetcher = useFetcher();
 
     useEffect(() => {
@@ -129,8 +131,10 @@ function Order() {
             <div className="space-y-2 bg-stone-200 py-5 px-6">
                 <p className="text-sm font-medium text-stone-600">Price pizza: {formatCurrency(orderPrice)}</p>
                 {priority && <p className="text-sm font-medium text-stone-600">Price priority: {formatCurrency(priorityPrice)}</p>}
-                {priorityPrice && <p className="font-bold">To pay on delivery: {formatCurrency(orderPrice + priorityPrice)}</p>}
+                <p className="font-bold">To pay on delivery: {formatCurrency(orderPrice + priorityPrice)}</p>
             </div>
+
+            {!priority && <UpdateOrder order={order} />}
         </div>
     );
 }
