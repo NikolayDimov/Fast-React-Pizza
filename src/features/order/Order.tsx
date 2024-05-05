@@ -1,6 +1,6 @@
 // Test ID: IIDSAT
 
-import { useLoaderData } from "react-router-dom";
+import { Params, RouteObject, useLoaderData } from "react-router-dom";
 import { getOrder } from "../../services/apiRestaurant";
 import { calcMinutesLeft, formatCurrency, formatDate } from "../../utils/helpers";
 import OrderItem from "./OrderItem";
@@ -24,7 +24,7 @@ export interface OrderData {
     cart: PizzaOrder[];
     position: string;
     orderPrice: number;
-    priorityPrice?: number;
+    priorityPrice: number;
 }
 
 // const order: OrderData = {
@@ -113,7 +113,7 @@ export interface LoaderParams {
     orderId: string;
 }
 
-export async function loader({ params }: { params: LoaderParams }) {
+export async function loader({ params }) {
     const order = await getOrder(params.orderId);
     return order;
 }

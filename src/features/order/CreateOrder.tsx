@@ -4,6 +4,11 @@ import { createOrder } from "../../services/apiRestaurant";
 import Button from "../../ui/Button";
 import { useSelector } from "react-redux";
 import { UserRootState } from "../user/Username";
+import { clearCart, getCart, getTotalCartPrice } from "../cart/cartSlice";
+import EmptyCart from "../cart/EmptyCart";
+import store from "../../store";
+import { useEffect, useState } from "react";
+import { formatCurrency } from "../../utils/helpers";
 
 export interface Order {
     customer: string;
@@ -20,38 +25,48 @@ export interface Errors {
 // https://uibakery.io/regex-library/phone-number
 const isValidPhone = (str: string) => /^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/.test(str);
 
-const fakeCart: PizzaOrder[] = [
-    {
-        pizzaId: 12,
-        name: "Mediterranean",
-        quantity: 2,
-        unitPrice: 16,
-        totalPrice: 32,
-    },
-    {
-        pizzaId: 6,
-        name: "Vegetale",
-        quantity: 1,
-        unitPrice: 13,
-        totalPrice: 13,
-    },
-    {
-        pizzaId: 11,
-        name: "Spinach and Mushroom",
-        quantity: 1,
-        unitPrice: 15,
-        totalPrice: 15,
-    },
-];
+// const fakeCart: PizzaOrder[] = [
+//     {
+//         pizzaId: 12,
+//         name: "Mediterranean",
+//         quantity: 2,
+//         unitPrice: 16,
+//         totalPrice: 32,
+//     },
+//     {
+//         pizzaId: 6,
+//         name: "Vegetale",
+//         quantity: 1,
+//         unitPrice: 13,
+//         totalPrice: 13,
+//     },
+//     {
+//         pizzaId: 11,
+//         name: "Spinach and Mushroom",
+//         quantity: 1,
+//         unitPrice: 15,
+//         totalPrice: 15,
+//     },
+// ];
 
 function CreateOrder() {
     const username = useSelector((state: UserRootState) => state.user.username);
+    // const isLoadingAddress = addressStatus === "loading";
     const navigation = useNavigation();
     const isSubmitting = navigation.state === "submitting";
-    // const [withPriority, setWithPriority] = useState(false);
-    const cart = fakeCart;
+
+    const [withPriority, setWithPriority] = useState(false);
 
     const formErrors: Errors | undefined = useActionData() as Errors | undefined;
+    // const cart = fakeCart;
+    const cart = useSelector(getCart);
+    console.log(cart);
+
+    const totalCartPrice = useSelector(getTotalCartPrice);
+    const priorityPrice = withPriority ? totalCartPrice * 0.2 : 0;
+    const totalPrice = totalCartPrice + priorityPrice;
+
+    if (!cart.length) return <EmptyCart />;
 
     return (
         <div className="py-6 px-4">
@@ -85,8 +100,8 @@ function CreateOrder() {
                         type="checkbox"
                         name="priority"
                         id="priority"
-                        // value={withPriority}
-                        // onChange={(e) => setWithPriority(e.target.checked)}
+                        checked={withPriority}
+                        onChange={(e) => setWithPriority(e.target.checked)}
                     />
                     <label className="font-medium" htmlFor="priority">
                         Want to yo give your order priority?
@@ -96,7 +111,7 @@ function CreateOrder() {
                 <div>
                     <input type="hidden" name="cart" value={JSON.stringify(cart)} />
                     <Button type="primary" disabled={isSubmitting}>
-                        {isSubmitting ? "Placing order..." : "Order now"}
+                        {isSubmitting ? "Placing order..." : `Order now for ${formatCurrency(totalPrice)}`}
                     </Button>
                 </div>
             </Form>
@@ -106,32 +121,33 @@ function CreateOrder() {
 
 export async function action({ request }: { request: Request }) {
     const formData = await request.formData();
-    const data: Record<string, FormDataEntryValue> = Object.fromEntries(formData);
+    const data: { [key: string]: string | File } = Object.fromEntries(formData);
 
-    // Define a function to check if a value is a PizzaOrder array
-    const isPizzaOrderArray = (value: unknown): value is PizzaOrder[] => {
-        return Array.isArray(value) && value.every((item) => typeof item === "object" && item !== null);
-    };
+    console.log("Form data:", data);
 
-    // Cast data to Order type and handle type mismatches
     const order: Partial<Order> = {
-        customer: data.customer?.toString() || "",
-        phone: data.phone?.toString() || "",
-        address: data.address?.toString() || "",
-        cart: isPizzaOrderArray(data.cart) ? (data.cart as PizzaOrder[]) : [],
+        ...data,
+        cart: JSON.parse(data.cart as string) as PizzaOrder[],
         priority: data.priority === "on",
     };
 
-    // Initialize errors object
+    console.log(order);
+
     const errors: Errors = {};
+    if ("phone" in data && typeof data.phone === "string") {
+        order.phone = data.phone;
+    }
+    if (order.phone && !isValidPhone(order.phone as string)) {
+        errors.phone = "Please give us your correct phone number. We might need it to contact you.";
+    }
 
-    // Validate phone number
-    if (order.phone && !isValidPhone(order.phone)) errors.phone = "Please enter a correct phone number!";
-
-    // Check for errors and handle redirection
     if (Object.keys(errors).length > 0) return errors;
 
+    // If everything is okay, create a new order and redirect
     const newOrder = await createOrder(order as Order);
+
+    // Do NOT overuse
+    store.dispatch(clearCart());
 
     return redirect(`/order/${newOrder.id}`);
 }
