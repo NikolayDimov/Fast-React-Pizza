@@ -4,7 +4,7 @@ interface ButtonProps {
     children: React.ReactNode;
     disabled?: boolean;
     to?: string;
-    type?: "primary" | "small" | "secondary";
+    type?: "primary" | "small" | "secondary" | "round";
     onClick?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 }
 
@@ -17,6 +17,7 @@ const Button: React.FC<ButtonProps> = ({ children, disabled, to, type = "primary
         small: base + " px-4 py-2 md:px-5 md:py-2.5 text-xs",
         secondary:
             "uppercase font-semibold text-sm text-stone-400 border-2 border-stone-300 inline-block tracking-wide rounded-full hover:bg-stone-300 hover:text-stone-800 transition-colors duration-300 focus:outline-none focus:ring focus:ring-stone-200 focus:text-stone-800 focus:ring-offset-2 disabled:cursor-not-allowed py-2.5 px-4 md:px-6 md:py-3.5",
+        round: base + " px-2.5 py-1 md:px-3.5 md:py-2 text-sm",
     };
 
     if (to) {
