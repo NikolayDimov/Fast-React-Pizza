@@ -3,13 +3,13 @@ import { PizzaOrder } from "./Order";
 import { createOrder } from "../../services/apiRestaurant";
 import Button from "../../ui/Button";
 import { useDispatch, useSelector } from "react-redux";
-import { UserRootState } from "../user/Username";
 import { clearCart, getCart, getTotalCartPrice } from "../cart/cartSlice";
 import EmptyCart from "../cart/EmptyCart";
 import store from "../../store";
 import { useState } from "react";
 import { formatCurrency } from "../../utils/helpers";
 import { fetchAddress } from "../user/userSlice";
+import { UserRootState } from "../user/Username";
 
 export interface Order {
     customer: string;
@@ -46,7 +46,7 @@ const isValidPhone = (str: string) => /^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\
 //         name: "Spinach and Mushroom",
 //         quantity: 1,
 //         unitPrice: 15,
-//         totalPrice: 15,
+//         totalPrice: 15,v
 //     },
 // ];
 
@@ -102,6 +102,7 @@ function CreateOrder() {
                         />
                         {addressStatus === "error" && <p className="text-xs mt-2 text-red-700 bg-red-100 p2 rounded-md">{errorAddress}</p>}
                     </div>
+
                     {!position.latitude && !position.longitude && (
                         <span className="absolute right-0.5 z-10 top=[3px]">
                             <Button
