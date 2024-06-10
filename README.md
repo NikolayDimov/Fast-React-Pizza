@@ -2,7 +2,7 @@
 
 1. Start app: npm run dev
 
-# Visited Locations App
+# React Fast Pizza
 
 This is a React application built with Vite that allows users to add pizzas on the cart. Use Tailwind CSS and TypeScript. React-router-dom provide the data that is necessary for each page throw useLoaderData() function.
 
